@@ -1,33 +1,40 @@
 # Roohu ClipForge (Android)
 
-Roohu ClipForge turns long videos into vertical 9:16 clips. This project wraps the existing
-`Roohu-ClipForge.html` editor in a native Android app (package `com.roohu.clipforge`) with a
-native animated launch screen. The HTML is bundled in `app/src/main/assets/` and runs offline.
+Android wrapper for the existing `Roohu-ClipForge.html` editor. The original HTML interface is bundled locally in the app assets and displayed using Android WebView. The app includes a native animated startup screen and a native download bridge.
 
-## Build the APK on GitHub (no Android Studio needed)
-1. Create a new empty GitHub repository.
-2. Upload **everything** in this folder, including the hidden `.github` folder. Easiest: install
-   GitHub Desktop or use `git`: `git init`, `git add .`, `git commit -m "ClipForge"`, `git branch -M main`,
-   `git remote add origin <your repo URL>`, `git push -u origin main`.
-3. Open the repository, then the **Actions** tab. The build starts by itself on every push to `main`.
-   You can also pick **Build Roohu ClipForge APK** and press **Run workflow**.
-4. When the run shows a green check, open it and scroll to **Artifacts**.
-5. Download **Roohu-ClipForge-debug-apk**, unzip it, and install `app-debug.apk` on your phone
-   (allow "Install unknown apps" for your file manager or browser when asked).
+- App name: Roohu ClipForge
+- Package: `com.roohu.clipforge`
+- Minimum Android version: Android 8.0 (API 26)
+- Build: Android Gradle Plugin 8.5.2, Gradle 8.7, Java 17
 
-## What works in the app
-- Import video from the phone, analyse it (audio loudness and motion), pick the best moments.
-- Review and trim clips, 9:16 reframing, enhancement, transitions, captions from .srt/.vtt files,
-  music you add, RoohuXKhan watermark on every export.
-- Export runs in real time inside the app. Finished clips are saved in the in-app Library and to
-  **Downloads/RoohuClipForge** on the phone (Android 10+; on Android 8-9 they go to the app's Movies folder).
+## Build an APK on GitHub (no Android Studio required)
 
-## Known limits (honest list)
-- **Auto-captions are not available in the Android app.** Android WebView has no speech-recognition API.
-  Import an .srt/.vtt file instead. Accurate auto-captions need a Whisper-style service (not included).
-- **Claude title/rating button is unavailable** outside claude.ai.
-- **YouTube links are not downloaded.** That needs a server and permission for each video.
-- Caption fonts load from Google Fonts when online; offline the app uses a built-in fallback font.
-- Exporting must stay in the foreground: Android pauses web rendering when the app is in the background.
-- The first build uses a debug-signed APK. A Play Store release needs your own signing key.
-- The Gradle wrapper JAR is not included; the workflow installs Gradle 8.7 itself, so the build does not need it.
+1. Push or upload the complete repository contents to the `main` branch. Keep the hidden `.github/workflows/` folder.
+2. Open the repository's **Actions** tab.
+3. Select **Build Roohu ClipForge APK**. A push to `main` also starts the workflow automatically.
+4. If starting it manually, press **Run workflow**.
+5. Wait for the run to finish with a green check.
+6. Open that run and download **Roohu-ClipForge-debug-apk** from the Artifacts section.
+7. Extract the downloaded ZIP and install `app-debug.apk` on your Android phone. Allow your file manager or browser to install unknown apps if Android asks.
+
+## Project layout
+
+- `app/src/main/assets/Roohu-ClipForge.html` — original editor interface
+- `app/src/main/java/com/roohu/clipforge/MainActivity.java` — Android WebView host, native splash and download bridge
+- `app/src/main/res/` — layouts, theme, icons and splash artwork
+- `.github/workflows/build-apk.yml` — GitHub Actions build
+
+The workflow installs Gradle 8.7 directly, so a Gradle wrapper is not required for this GitHub build.
+
+## Important limitations
+
+- This packaging step does not add a remote AI model or cloud video-analysis service. Do not treat heuristic/local analysis as a hosted AI feature.
+- Android WebView support for video codecs, MediaRecorder, and large-file exports depends on the phone's Android System WebView version, available memory, codecs, and free storage.
+- Some fonts are requested from Google Fonts when the phone is online; system fallback fonts are used when unavailable.
+- Auto speech-to-text captions require a speech recognition engine/service; importing subtitle files is a separate capability.
+- YouTube downloading is not included.
+- The generated APK is a debug build for testing, not a Play Store release.
+
+## Troubleshooting
+
+If GitHub Actions fails, open the failed run and inspect the first failed step. The build log will show the missing dependency, compilation error, or SDK issue. A green workflow run confirms the APK was produced and uploaded; it does not by itself prove every editing feature works on every phone.
