@@ -30,6 +30,14 @@ android {
     }
 }
 
+// Kotlin 1.8+ merged the JDK7/JDK8 extensions into kotlin-stdlib.
+// Exclude legacy split artifacts pulled by older transitive dependencies
+// to prevent duplicate classes during Android packaging.
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}
+
 dependencies {
     implementation 'androidx.activity:activity:1.9.0'
     implementation 'androidx.webkit:webkit:1.11.0'
